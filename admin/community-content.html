@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Community Content Management</title>
+<style>
+:root{--bg:#070707;--panel:#111;--line:#292929;--text:#f3f3f3;--muted:#999;--gold:#d5ad45}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Arial,sans-serif}
+main{max-width:1180px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+h1{margin:0;font-size:26px}h2{font-size:19px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+label{display:block;margin:10px 0 5px;color:#ccc;font-size:13px}input,textarea,select{width:100%;background:#080808;border:1px solid var(--line);color:#fff;border-radius:8px;padding:10px;font:inherit}
+textarea{min-height:110px;resize:vertical}.btn{border:1px solid var(--line);background:#171717;color:#fff;padding:9px 12px;border-radius:8px;cursor:pointer}.btn.gold{background:var(--gold);color:#080808;border-color:var(--gold);font-weight:800}.btn.danger{border-color:#6d2929}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.item{padding:12px 0;border-top:1px solid var(--line)}.item:first-child{border-top:0}.pill{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:3px 7px;color:#bbb}.notice{padding:10px;border:1px solid var(--line);border-radius:8px;background:#0b0b0b}
+@media(max-width:760px){main{padding:14px}.grid{grid-template-columns:1fr}.top{align-items:flex-start}.btn{min-height:42px}.row>*{flex:1 1 auto}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><div><h1>Community Content</h1><div class="muted">Manage official events and announcements.</div></div><a class="btn" href="/admin">Back to Admin</a></div>
+<div id="status" class="notice" style="margin-top:14px">Loading your permissions…</div>
+<div class="grid">
+<section class="card">
+<h2>Event</h2>
+<form id="eventForm">
+<input type="hidden" id="eventId">
+<label>Title<input id="eventTitle" maxlength="160" required></label>
+<label>Description<textarea id="eventDescription" maxlength="5000"></textarea></label>
+<label>Starts<input id="eventStart" type="datetime-local" required></label>
+<label>Ends<input id="eventEnd" type="datetime-local"></label>
+<label>Location<input id="eventLocation" maxlength="300"></label>
+<label>Department<select id="eventDepartment"><option value="">Church-wide</option></select></label>
+<label>Max attendees (optional)<input id="eventMax" type="number" min="1"></label>
+<label><input id="eventPublished" type="checkbox" checked> Published</label>
+<div class="row"><button class="btn gold">Save Event</button><button type="button" class="btn" id="eventClear">Clear</button></div>
+</form>
+<div id="eventsList" style="margin-top:15px"></div>
+</section>
+<section class="card">
+<h2>Announcement</h2>
+<form id="announcementForm">
+<input type="hidden" id="announcementId">
+<label>Title<input id="announcementTitle" maxlength="160" required></label>
+<label>Body<textarea id="announcementBody" maxlength="5000" required></textarea></label>
+<label>Department<select id="announcementDepartment"><option value="">Church-wide</option></select></label>
+<label><input id="announcementPublished" type="checkbox" checked> Published</label>
+<div class="row"><button class="btn gold">Save Announcement</button><button type="button" class="btn" id="announcementClear">Clear</button></div>
+</form>
+<div id="announcementsList" style="margin-top:15px"></div>
+</section>
+</div>
+</main>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+async function api(route,method='GET',data){const r=await fetch('/api/community?route='+encodeURIComponent(route),{method,headers:{'Content-Type':'application/json'},body:method==='GET'?undefined:JSON.stringify(data||{})});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Request failed');return j}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+let departments=[];
+function fillDepartments(){for(const id of ['eventDepartment','announcementDepartment'])$( '#'+id).innerHTML='<option value="">Church-wide</option>'+departments.map(d=>'<option value="'+esc(d.id)+'">'+esc(d.name||d.title||'Department')+'</option>').join('')}
+async function load(){
+ try{
+  const [e,a]=await Promise.all([api('manage-events'),api('manage-announcements')]);
+  $('#status').textContent='Authorized community content manager.';
+  $('#eventsList').innerHTML=(e.items||[]).map(x=>'<div class="item"><b>'+esc(x.title)+'</b><div class="muted">'+new Date(x.starts_at).toLocaleString()+' · '+esc(x.location||'No location')+'</div><div class="row" style="margin-top:7px"><span class="pill">'+(x.published?'Published':'Draft')+'</span><span class="pill">'+(x.cancelled?'Cancelled':'Active')+'</span><button class="btn" onclick="editEvent('+JSON.stringify(x).replace(/</g,'\\u003c')+')">Edit</button><button class="btn danger" onclick="deleteEvent(\''+x.id+'\')">Delete</button></div></div>').join('')||'<div class="muted">No events.</div>';
+  $('#announcementsList').innerHTML=(a.items||[]).map(x=>'<div class="item"><b>'+esc(x.title)+'</b><div class="muted">'+new Date(x.created_at).toLocaleString()+'</div><div style="white-space:pre-wrap;margin-top:5px">'+esc(x.body)+'</div><div class="row" style="margin-top:7px"><span class="pill">'+(x.published?'Published':'Draft')+'</span><button class="btn" onclick="editAnnouncement('+JSON.stringify(x).replace(/</g,'\\u003c')+')">Edit</button><button class="btn danger" onclick="deleteAnnouncement(\''+x.id+'\')">Delete</button></div></div>').join('')||'<div class="muted">No announcements.</div>';
+ }catch(err){$('#status').textContent=err.message}
+}
+function isoToLocal(v){if(!v)return '';const d=new Date(v);const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())}
+function editEvent(x){$('#eventId').value=x.id;$('#eventTitle').value=x.title;$('#eventDescription').value=x.description||'';$('#eventStart').value=isoToLocal(x.starts_at);$('#eventEnd').value=isoToLocal(x.ends_at);$('#eventLocation').value=x.location||'';$('#eventDepartment').value=x.department_id||'';$('#eventMax').value=x.max_attendees||'';$('#eventPublished').checked=!!x.published;scrollTo({top:0,behavior:'smooth'})}
+function editAnnouncement(x){$('#announcementId').value=x.id;$('#announcementTitle').value=x.title;$('#announcementBody').value=x.body;$('#announcementDepartment').value=x.department_id||'';$('#announcementPublished').checked=!!x.published;scrollTo({top:0,behavior:'smooth'})}
+async function deleteEvent(id){if(!confirm('Delete this event?'))return;try{await api('manage-event','DELETE',{id});await load()}catch(e){alert(e.message)}}
+async function deleteAnnouncement(id){if(!confirm('Delete this announcement?'))return;try{await api('manage-announcement','DELETE',{id});await load()}catch(e){alert(e.message)}}
+$('#eventForm').onsubmit=async e=>{e.preventDefault();try{await api('manage-event','POST',{id:$('#eventId').value||undefined,title:$('#eventTitle').value,description:$('#eventDescription').value,starts_at:new Date($('#eventStart').value).toISOString(),ends_at:$('#eventEnd').value?new Date($('#eventEnd').value).toISOString():null,location:$('#eventLocation').value,department_id:$('#eventDepartment').value||null,max_attendees:$('#eventMax').value?Number($('#eventMax').value):null,published:$('#eventPublished').checked});$('#eventForm').reset();$('#eventPublished').checked=true;await load()}catch(err){alert(err.message)}}
+$('#announcementForm').onsubmit=async e=>{e.preventDefault();try{await api('manage-announcement','POST',{id:$('#announcementId').value||undefined,title:$('#announcementTitle').value,body:$('#announcementBody').value,department_id:$('#announcementDepartment').value||null,published:$('#announcementPublished').checked});$('#announcementForm').reset();$('#announcementPublished').checked=true;await load()}catch(err){alert(err.message)}}
+$('#eventClear').onclick=()=>$('#eventForm').reset();$('#announcementClear').onclick=()=>$('#announcementForm').reset();
+load();
+</script>
+</body>
+</html>

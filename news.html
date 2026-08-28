@@ -134,7 +134,7 @@ body{overflow-x:hidden}
 (()=>{const o=document.createElement('div');o.className='tcc-transition';o.innerHTML='<span>TCC</span>';document.body.appendChild(o);
 document.querySelectorAll('a[href$=".html"]').forEach(a=>a.addEventListener('click',e=>{const h=a.getAttribute('href');if(!h||h.startsWith('http'))return;e.preventDefault();o.classList.add('active');setTimeout(()=>location.href=h,420)}));})();
 </script>
-<script>(async()=>{let x=document.getElementById('news');try{let r=await fetch('/api/news'),d=await r.json();x.innerHTML=d.length?d.map(n=>`<article><div class="tcc-meta">${n.date||''}</div><h2>${n.title||''}</h2><p>${n.excerpt||n.content||''}</p></article>`).join(''):'<div class="tcc-empty">No news has been published yet.</div>'}catch(_){x.innerHTML='<div class="tcc-empty">News will appear here when the backend is connected.</div>'}})()</script>
+<script>(async()=>{let x=document.getElementById('news');try{let r=await fetch('/api/content?type=news'),d=await r.json(),items=d.items||[];x.innerHTML=items.length?items.map(n=>`<article><div class="tcc-meta">${n.date||''}</div><h2>${n.title||''}</h2><p>${n.excerpt||n.content||''}</p></article>`).join(''):'<div class="tcc-empty">No news has been published yet.</div>'}catch(_){x.innerHTML='<div class="tcc-empty">News will appear here when the backend is connected.</div>'}})()</script>
 <div class="tcc-more-backdrop" id="tccMoreBackdrop"></div>
 <div class="tcc-more-sheet" id="tccMoreSheet" aria-hidden="true">
   <a href="news.html"><span class="more-icon">◈</span><span>TCC News</span></a>

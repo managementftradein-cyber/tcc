@@ -134,7 +134,7 @@ body{overflow-x:hidden}
 (()=>{const o=document.createElement('div');o.className='tcc-transition';o.innerHTML='<span>TCC</span>';document.body.appendChild(o);
 document.querySelectorAll('a[href$=".html"]').forEach(a=>a.addEventListener('click',e=>{const h=a.getAttribute('href');if(!h||h.startsWith('http'))return;e.preventDefault();o.classList.add('active');setTimeout(()=>location.href=h,420)}));})();
 </script>
-<script>document.getElementById('f').onsubmit=async e=>{e.preventDefault();let s=document.getElementById('s');s.textContent='Submitting…';try{let r=await fetch('/api/prayer-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});s.textContent=r.ok?'Your prayer request has been received.':'Please try again.';if(r.ok)e.target.reset()}catch(_){s.textContent='Please try again.'}}</script>
+<script>document.getElementById('f').onsubmit=async e=>{e.preventDefault();let s=document.getElementById('s');s.textContent='Submitting…';try{let r=await fetch('/api/forms?type=prayer-requests',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.fromEntries(new FormData(e.target)))});s.textContent=r.ok?'Your prayer request has been received.':'Please try again.';if(r.ok)e.target.reset()}catch(_){s.textContent='Please try again.'}}</script>
 <div class="tcc-more-backdrop" id="tccMoreBackdrop"></div>
 <div class="tcc-more-sheet" id="tccMoreSheet" aria-hidden="true">
   <a href="news.html"><span class="more-icon">◈</span><span>TCC News</span></a>
