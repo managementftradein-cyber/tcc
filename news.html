@@ -1,0 +1,175 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TCC News — TCC</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#d9b65d;margin-right:6px;animation:tccPulse 1.7s infinite}
+@keyframes tccPulse{70%{box-shadow:0 0 0 8px transparent}}
+.tcc-feature-nav{display:flex;gap:22px;align-items:center;justify-content:center;padding:12px;background:#090909;border-bottom:1px solid rgba(217,182,93,.18)}
+.tcc-feature-nav a{color:#eee;text-decoration:none;font:700 11px Inter,sans-serif;letter-spacing:.13em;text-transform:uppercase}
+.tcc-feature-nav a:hover{color:#d9b65d}
+.tcc-feature{min-height:100vh;background:#090909;color:#f5f0e5;padding-top:72px}
+.tcc-hero{padding:130px 24px 90px;text-align:center;background:radial-gradient(circle at 50% 0,rgba(217,182,93,.16),transparent 42%)}
+.tcc-kicker{color:#d9b65d;font:700 11px Inter,sans-serif;letter-spacing:.25em;text-transform:uppercase}
+.tcc-hero h1{font:400 clamp(52px,8vw,100px)/.9 Georgia,serif;margin:20px auto;max-width:1100px}
+.tcc-hero p{max-width:680px;margin:auto;color:#aaa;line-height:1.8;font-size:18px}
+.tcc-wrap{max-width:1180px;margin:auto;padding:75px 24px}
+.tcc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.tcc-card{background:#111;border:1px solid rgba(217,182,93,.18);padding:30px;transition:.5s cubic-bezier(.22,1,.36,1)}
+.tcc-card:hover{transform:translateY(-8px);border-color:#d9b65d}
+.tcc-card h2,.tcc-card h3{color:#e5c873}
+.tcc-card p{color:#aaa;line-height:1.7}
+.tcc-btn{display:inline-flex;padding:14px 22px;margin-top:20px;background:#d9b65d;color:#080808;text-decoration:none;font-weight:800;border:0;cursor:pointer}
+.tcc-layout{display:grid;grid-template-columns:1.5fr .8fr;gap:24px}
+.tcc-player{background:#000;aspect-ratio:16/9;border:1px solid rgba(217,182,93,.25);display:grid;place-items:center;position:relative}
+.tcc-live-badge{position:absolute;top:16px;left:16px;background:#8d2026;color:#fff;padding:7px 11px;font:800 10px Inter;letter-spacing:.15em}
+.tcc-empty{padding:60px 20px;text-align:center;color:#888;border:1px dashed rgba(217,182,93,.25)}
+.tcc-news{display:grid;gap:18px}
+.tcc-news article{padding:25px;background:#111;border-left:2px solid #d9b65d}
+.tcc-meta{font-size:10px;color:#d9b65d;letter-spacing:.15em;text-transform:uppercase}
+.tcc-prophetic{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.tcc-panel{background:#111;border:1px solid rgba(217,182,93,.18);padding:30px}
+.tcc-panel input,.tcc-panel textarea{width:100%;box-sizing:border-box;background:#080808;color:#fff;border:1px solid #2b2b2b;padding:14px;margin:7px 0 13px}
+@media(max-width:800px){.tcc-grid,.tcc-layout,.tcc-prophetic{grid-template-columns:1fr}.tcc-feature-nav{overflow:auto;justify-content:flex-start;white-space:nowrap}}
+</style>
+
+<style id="tcc-v3-mobile-system">
+:root{--tcc-gold:#d9b65d;--tcc-black:#090909;--tcc-soft:#f4e7bf}
+html{scroll-behavior:smooth}
+body{overflow-x:hidden}
+@media (max-width:900px){
+  body{padding-bottom:76px}
+  .desktop-only{display:none!important}
+  .tcc-feature-nav{display:none!important}
+
+  /* Mobile app-style bottom navigation */
+  .tcc-mobile-appbar{
+    position:fixed;left:0;right:0;bottom:0;height:72px;z-index:9990;
+    display:grid;grid-template-columns:repeat(5,1fr);
+    background:rgba(9,9,9,.96);backdrop-filter:blur(18px);
+    border-top:1px solid rgba(217,182,93,.25);
+    box-shadow:0 -12px 40px rgba(0,0,0,.35);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .tcc-mobile-appbar a,.tcc-mobile-more-btn{
+    color:#aaa;text-decoration:none;background:none;border:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:5px;font:600 9px Inter,sans-serif;letter-spacing:.05em;text-transform:uppercase;
+    min-width:0;cursor:pointer;
+  }
+  .tcc-mobile-appbar .icon{font-size:19px;line-height:1;color:#d9b65d}
+  .tcc-mobile-appbar a.active,.tcc-mobile-more-btn.active{color:#fff}
+  .tcc-mobile-appbar a.active .icon{filter:drop-shadow(0 0 7px rgba(217,182,93,.55))}
+  .tcc-more-sheet{
+    position:fixed;left:12px;right:12px;bottom:84px;z-index:9995;
+    background:rgba(12,12,12,.98);border:1px solid rgba(217,182,93,.28);
+    border-radius:18px;padding:10px;box-shadow:0 25px 70px rgba(0,0,0,.6);
+    transform:translateY(20px) scale(.98);opacity:0;pointer-events:none;
+    transition:.35s cubic-bezier(.22,1,.36,1);
+  }
+  .tcc-more-sheet.open{transform:none;opacity:1;pointer-events:auto}
+  .tcc-more-sheet a{
+    display:flex;align-items:center;gap:14px;padding:16px 14px;color:#eee;
+    text-decoration:none;border-bottom:1px solid rgba(255,255,255,.06);
+    font:700 11px Inter,sans-serif;letter-spacing:.09em;text-transform:uppercase;
+  }
+  .tcc-more-sheet a:last-child{border-bottom:0}
+  .tcc-more-sheet .more-icon{color:#d9b65d;font-size:19px;width:26px;text-align:center}
+  .tcc-more-backdrop{
+    position:fixed;inset:0;z-index:9994;background:rgba(0,0,0,.55);
+    opacity:0;pointer-events:none;transition:.25s
+  }
+  .tcc-more-backdrop.open{opacity:1;pointer-events:auto}
+
+  /* Keep headers from becoming cramped on small screens. */
+  header,.header,.navbar,.nav-bar{max-width:100%;overflow:visible}
+  .hero h1{font-size:clamp(42px,12vw,72px)!important}
+  .hero,.section,.container{max-width:100%}
+  img,video,iframe{max-width:100%}
+  input,textarea,select,button{font-size:16px}
+}
+
+@media (min-width:901px){
+  .tcc-mobile-appbar,.tcc-more-sheet,.tcc-more-backdrop{display:none!important}
+
+  /* Unique desktop "TCC Hub" strip keeps special content out of the main header. */
+  .tcc-desktop-hub{
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    min-height:42px;padding:7px 20px;
+    background:#0d0d0d;border-bottom:1px solid rgba(217,182,93,.16);
+  }
+  .tcc-desktop-hub .hub-label{
+    color:#d9b65d;font:800 9px Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;
+    margin-right:8px;
+  }
+  .tcc-desktop-hub a{
+    display:inline-flex;align-items:center;gap:7px;padding:7px 13px;
+    color:#d9d4c7;text-decoration:none;border:1px solid rgba(217,182,93,.14);
+    font:700 9px Inter,sans-serif;letter-spacing:.09em;text-transform:uppercase;
+    transition:.28s
+  }
+  .tcc-desktop-hub a:hover{color:#090909;background:#d9b65d;border-color:#d9b65d}
+  .tcc-desktop-hub .hub-live{color:#d9b65d}
+}
+
+.tcc-map-section{position:relative;background:#0b0b0b;border-top:1px solid rgba(217,182,93,.15)}
+.tcc-map-wrap{max-width:1180px;margin:auto;padding:75px 24px}
+.tcc-map-grid{display:grid;grid-template-columns:.72fr 1.28fr;gap:24px;align-items:stretch}
+.tcc-map-card{background:#111;border:1px solid rgba(217,182,93,.18);padding:32px}
+.tcc-map-card h2{color:#e5c873}
+.tcc-map-address{color:#aaa;line-height:1.7}
+.tcc-map-btn{display:inline-flex;align-items:center;gap:9px;margin-top:20px;padding:14px 20px;background:#d9b65d;color:#080808;text-decoration:none;font:800 11px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.tcc-map-frame{min-height:390px;background:#050505;border:1px solid rgba(217,182,93,.18);overflow:hidden}
+.tcc-map-frame iframe{width:100%;height:100%;min-height:390px;border:0;display:block}
+@media(max-width:900px){.tcc-map-grid{grid-template-columns:1fr}.tcc-map-frame,.tcc-map-frame iframe{min-height:300px}}
+</style>
+</head><body>
+<div class="tcc-desktop-hub" aria-label="TCC special sections">
+  <span class="hub-label">TCC Hub</span>
+  <a href="news.html">TCC News</a>
+  <a href="prophetic-room.html">Prophetic Room</a>
+  <a class="hub-live" href="live.html"><span class="live-dot"></span> Live</a>
+</div>
+
+<nav class="tcc-feature-nav"><a href="index.html">TCC</a><a href="index.html">Home</a><a href="prophetic-room.html">Prophetic Room</a><a href="news.html">TCC News</a><a href="live.html"><span class="live-dot"></span> Live</a></nav><main class="tcc-feature"><section class="tcc-hero"><div class="tcc-kicker">Stay Connected</div><h1>TCC News</h1><p>Announcements, ministry updates, testimonies, events and church communications.</p></section><section class="tcc-wrap"><div id="news" class="tcc-news"><div class="tcc-empty">Loading TCC News…</div></div></section></main>
+<style>.tcc-transition{position:fixed;inset:0;background:#080808;z-index:99999;display:grid;place-items:center;opacity:0;pointer-events:none;transition:.42s}.tcc-transition.active{opacity:1;pointer-events:auto}.tcc-transition span{color:#d9b65d;font:800 12px Inter;letter-spacing:.35em}</style>
+<script>
+(()=>{const o=document.createElement('div');o.className='tcc-transition';o.innerHTML='<span>TCC</span>';document.body.appendChild(o);
+document.querySelectorAll('a[href$=".html"]').forEach(a=>a.addEventListener('click',e=>{const h=a.getAttribute('href');if(!h||h.startsWith('http'))return;e.preventDefault();o.classList.add('active');setTimeout(()=>location.href=h,420)}));})();
+</script>
+<script>(async()=>{let x=document.getElementById('news');try{let r=await fetch('/api/news'),d=await r.json();x.innerHTML=d.length?d.map(n=>`<article><div class="tcc-meta">${n.date||''}</div><h2>${n.title||''}</h2><p>${n.excerpt||n.content||''}</p></article>`).join(''):'<div class="tcc-empty">No news has been published yet.</div>'}catch(_){x.innerHTML='<div class="tcc-empty">News will appear here when the backend is connected.</div>'}})()</script>
+<div class="tcc-more-backdrop" id="tccMoreBackdrop"></div>
+<div class="tcc-more-sheet" id="tccMoreSheet" aria-hidden="true">
+  <a href="news.html"><span class="more-icon">◈</span><span>TCC News</span></a>
+  <a href="prophetic-room.html"><span class="more-icon">✦</span><span>Prophetic Room</span></a>
+  <a href="live.html"><span class="more-icon">●</span><span>Live</span></a>
+  <a href="index.html#map"><span class="more-icon">⌖</span><span>Find Us / Directions</span></a>
+</div>
+<nav class="tcc-mobile-appbar" aria-label="Mobile navigation">
+  <a href="index.html" class="active"><span class="icon">⌂</span><span>Home</span></a>
+  <a href="/about"><span class="icon">◎</span><span>About</span></a>
+  <a href="/contact"><span class="icon">✆</span><span>Contact</span></a>
+  <a href="/give"><span class="icon">♡</span><span>Give</span></a>
+  <button class="tcc-more-btn" id="tccMoreBtn" aria-expanded="false"><span class="icon">•••</span><span>More</span></button>
+</nav>
+
+<script id="tcc-v3-mobile-js">
+(function(){
+  const btn=document.getElementById('tccMoreBtn');
+  const sheet=document.getElementById('tccMoreSheet');
+  const backdrop=document.getElementById('tccMoreBackdrop');
+  function toggle(open){
+    sheet.classList.toggle('open',open); backdrop.classList.toggle('open',open);
+    btn.setAttribute('aria-expanded',String(open));
+  }
+  if(btn){
+    btn.addEventListener('click',()=>toggle(!sheet.classList.contains('open')));
+    backdrop.addEventListener('click',()=>toggle(false));
+    sheet.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>toggle(false)));
+  }
+  const current=(location.pathname.split('/').pop()||'index.html').toLowerCase();
+  document.querySelectorAll('.tcc-mobile-appbar a').forEach(a=>{
+    const href=(a.getAttribute('href')||'').split('#')[0].toLowerCase();
+    if(href===current) a.classList.add('active');
+    else a.classList.remove('active');
+  });
+})();
+</script>
+</body></html>
